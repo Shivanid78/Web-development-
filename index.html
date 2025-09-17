@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Travel Website</title>
+  <style>
+    body{font-family:Arial, sans-serif; max-width:900px;margin:30px auto;padding:10px;}
+    .card{border:1px solid #ddd;padding:12px;border-radius:8px;margin:12px 0;display:flex;justify-content:space-between;align-items:center;}
+    .actions button{padding:8px 12px;cursor:pointer;}
+    /* Modal */
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;}
+    .modal{background:#fff;padding:20px;border-radius:8px;max-width:400px;width:90%}
+    .close{float:right;cursor:pointer}
+    input,textarea,select{width:100%;padding:8px;margin-top:6px;margin-bottom:10px;border:1px solid #ccc;border-radius:4px}
+  </style>
+</head>
+<body>
+  <h2>Top Destinations</h2>
+
+  <div id="list"></div>
+
+  <!-- Modal -->
+  <div id="modalBg" class="modal-bg" onclick="if(event.target===this) closeModal()">
+    <div class="modal">
+      <span class="close" onclick="closeModal()">✖</span>
+      <h3 id="destTitle">Request Info</h3>
+      <form id="knowForm" onsubmit="submitForm(event)">
+        <input type="text" id="name" placeholder="Aapka naam" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <select id="people"><option>1</option><option>2</option><option>3</option><option>4+</option></select>
+        <textarea id="message" rows="3" placeholder="Kuch note (optional)"></textarea>
+        <button type="submit">Submit</button>
+      </form>
+      <div id="thanks" style="display:none;margin-top:10px;color:green;"></div>
+    </div>
+  </div>
+
+  <script>
+    const destinations = [
+      {name:'Goa', desc:'Sun, beaches aur nightlife.'},
+      {name:'Manali', desc:'Himalayan hill-station aur adventure.'},
+      {name:'Kerala', desc:'Backwaters aur serene nature.'}
+    ];
+
+    const list = document.getElementById('list');
+
+    destinations.forEach((d, i)=>{
+      const el = document.createElement('div');
+      el.className = 'card';
+      el.innerHTML = `
+        <div>
+          <strong>${d.name}</strong><br><small>${d.desc}</small>
+        </div>
+        <div class="actions">
+          <button onclick="openModal(${i})">Know More</button>
+        </div>
+      `;
+      list.appendChild(el);
+    });
+
+    let currentIndex = null;
+    function openModal(i){
+      currentIndex = i;
+      document.getElementById('destTitle').innerText = `Request for ${destinations[i].name}`;
+      document.getElementById('modalBg').style.display = 'flex';
+      document.getElementById('knowForm').style.display = 'block';
+      document.getElementById('thanks').style.display = 'none';
+    }
+    function closeModal(){
+      document.getElementById('modalBg').style.display = 'none';
+      document.getElementById('knowForm').reset();
+    }
+
+    function submitForm(e){
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const people = document.getElementById('people').value;
+      const msg = document.getElementById('message').value;
+      const dest = destinations[currentIndex].name;
+      // For practice, hum console me dekhenge aur thanks dikhayenge.
+      console.log({dest,name,email,people,msg});
+      document.getElementById('knowForm').style.display = 'none';
+      const t = document.getElementById('thanks');
+      t.innerText = `Thank you ${name}! Hum aapko ${dest} ke details jaldi bhejenge.`;
+      t.style.display = 'block';
+      // NOTE: Real site me yahan AJAX/POST karke backend ko bhejte hain.
+    }
+  </script>
+</body>
+</html>
